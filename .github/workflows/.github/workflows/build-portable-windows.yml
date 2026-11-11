@@ -1,0 +1,28 @@
+
+name: Build portable Snowhush for Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build the app (not the installer)
+        run: cargo build --locked --release --manifest-path windows/Cargo.toml --bin Snowhush
+
+      - name: Upload portable executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Snowhush-portable-Windows-x64
+          path: windows/target/release/Snowhush.exe
+          if-no-files-found: error
